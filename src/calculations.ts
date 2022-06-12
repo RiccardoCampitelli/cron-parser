@@ -29,7 +29,7 @@ export const calculateRange = (input: string, allElements: number[]) => {
   const startIndex = allElements.findIndex((el) => el === startNum);
   const endIndex = allElements.findIndex((el) => el === endNum);
 
-  return [...allElements].splice(startIndex, endIndex);
+  return [...allElements].slice(startIndex, endIndex + 1);
 };
 
 export const calculateList = (input: string, allElements: number[]) => {
@@ -52,12 +52,28 @@ export const calculateSteps = (input: string, allElements: number[]) => {
   const stepInt = tryParseInt(step);
 
   if (base === "*") {
-    return allElements.filter((el) => el % stepInt === 0);
+    return allElements.filter((_, idx) => idx % stepInt === 0);
+  }
+
+  if (base.includes("-")) {
+    const [start, end] = base.split("-");
+
+    const startNum = tryParseInt(start);
+    const endNum = tryParseInt(end);
+
+    const arr = [...allElements].slice(startNum, endNum);
+
+    console.log({ arr });
+
+    // return [...allElements]
+    //   .slice(startNum, endNum)
+    //   .filter((_, idx) => (idx + 1) % stepInt === 0);
+    return [];
   }
 
   const baseInt = tryParseInt(base);
 
   return [...allElements]
-    .splice(baseInt, allElements.length)
+    .slice(baseInt, allElements.length)
     .filter((_, idx) => (idx + 1) % stepInt === 0);
 };

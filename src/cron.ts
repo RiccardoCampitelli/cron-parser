@@ -9,29 +9,39 @@ const buildArray = (to: number) => {
   return Array.from({ length: to }, (_, idx) => idx);
 };
 
-const parseCron = (input: string, allElements: number[]) => {
+const parseCron = (input: string, allElements: number[]): number[] => {
+  if (input.includes(",")) {
+    let result: number[] = [];
+
+    const sections = input.split(",");
+
+    for (let i = 0; i < sections.length; i++) {
+      const sectionResult = parseCron(sections[i], allElements);
+
+      result.push(...sectionResult);
+    }
+
+    return [...new Set(result)];
+  }
+
   if (input === "*") {
-    return allElements.join(" ");
+    return allElements;
+  }
+  
+  if (input.includes("/")) {
+    return calculateSteps(input, allElements);
   }
 
   if (input.includes("-")) {
-    
-    return calculateRange(input, allElements).join(" ");
+    return calculateRange(input, allElements);
   }
 
-  if (input.includes(",")) {
-    return calculateList(input, allElements).join(" ");
-  }
-
-  if (input.includes("/")) {
-    return calculateSteps(input, allElements).join(" ");
-  }
 
   if (allElements.includes(tryParseInt(input)) === false) {
     throw new Error("Invalid input");
   }
 
-  return input;
+  return [tryParseInt(input)];
 };
 
 const plusOne = (el: number) => el + 1;
@@ -41,6 +51,10 @@ const months = buildArray(12).map(plusOne);
 const daysInMonth = buildArray(31).map(plusOne);
 const hours = buildArray(24);
 const minutes = buildArray(60);
+
+const printAsString = (input: number[]) => {
+  return input.join(" ");
+};
 
 export const printCron = (cron: string) => {
   const [min, hour, dayMonth, month, dayWeek, command] = cron.split(" ");
@@ -52,11 +66,11 @@ export const printCron = (cron: string) => {
     const parsedMonth = parseCron(month, months);
     const parsedDayWeek = parseCron(dayWeek, days);
 
-    console.log(`minute        ${parsedMin}`);
-    console.log(`hour          ${parsedHour}`);
-    console.log(`day of month  ${parsedDayMonth}`);
-    console.log(`month         ${parsedMonth}`);
-    console.log(`day of week   ${parsedDayWeek}`);
+    console.log(`minute        ${printAsString(parsedMin)}`);
+    console.log(`hour          ${printAsString(parsedHour)}`);
+    console.log(`day of month  ${printAsString(parsedDayMonth)}`);
+    console.log(`month         ${printAsString(parsedMonth)}`);
+    console.log(`day of week   ${printAsString(parsedDayWeek)}`);
     console.log(`command       ${command}`);
   } catch (error: unknown | Error) {
     if (error instanceof Error) {

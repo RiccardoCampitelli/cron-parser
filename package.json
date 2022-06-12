@@ -8,9 +8,7 @@
   },
   "scripts": {
     "build": "tsc -p .",
-    "local": "sudo npm uninstall -g --force && sudo npm install -g --force",
-    "dev": "ts-node src/index.ts",
-    "test": "echo \"Sorry didn't have time to write tests in 3 hours\" && exit 1"
+    "dev": "ts-node src/index.ts"
   },
   "keywords": [],
   "author": "",
